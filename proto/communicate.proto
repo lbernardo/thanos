@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package="app/proto";
+
+service Communicate {
+    rpc Apply (ApplyRequest) returns (StatusResponse) {}
+}
+
+message ApplyRequest {
+    bytes deployment = 1;
+    bytes service = 2;
+    bytes ingress = 3;
+    string secret = 4;
+}
+
+message StatusResponse {
+    bool success = 1;
+}

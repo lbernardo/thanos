@@ -1,0 +1,13 @@
+{
+    "name": "thanos",
+    "environments": {
+        "prod": {
+            "image": "registry.gitlab.com/thanos/thanos/prod",
+            "replicas": 1,
+            "service": {
+                "host": "thanos.ainda-sem-nome.com",
+                "port": 80
+            }
+        }
+    }
+}
