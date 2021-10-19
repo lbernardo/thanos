@@ -1,11 +1,11 @@
 {
-    "name": "thanos",
+    "name": "webapp",
     "environments": {
         "prod": {
-            "image": "registry.gitlab.com/thanos/thanos/prod",
+            "image": "nginx",
             "replicas": 1,
             "service": {
-                "host": "thanos.ainda-sem-nome.com",
+                "host": "webapp.example.com",
                 "port": 80
             }
         }
