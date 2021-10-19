@@ -28,7 +28,7 @@ var serverCmd = &cobra.Command{
 	Short: "Start server thanos",
 	Long:  `Start thanos server to communicate with Kubernetes`,
 	Run: func(cmd *cobra.Command, args []string) {
-		run.RunServer(viper.GetString("THANOS_ADDRESS"), viper.GetString("THANOS_SECRET"))
+		run.RunServer(viper.GetString("thanos_address"), viper.GetString("thanos_secret"))
 	},
 }
 
