@@ -5,7 +5,7 @@
             "image": "nginx",
             "replicas": 1,
             "service": {
-                "host": "webapp.example.com",
+                "host": "webapp.lubipay.com",
                 "port": 80
             }
         }

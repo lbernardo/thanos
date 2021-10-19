@@ -4,7 +4,7 @@ import "fmt"
 
 func NewIngress(appname, host string) *Ingress {
 	return &Ingress{
-		APIVersion: "extensions/v1beta1",
+		APIVersion: "networking.k8s.io/v1",
 		Kind:       "Ingress",
 		Metadata: IngressMetadata{
 			Name: fmt.Sprintf("%v-ingress-controller", appname),
@@ -19,10 +19,15 @@ func NewIngress(appname, host string) *Ingress {
 					HTTP: HTTP{
 						Paths: []Path{
 							Path{
-								Path: "/",
+								Path:     "/",
+								PathType: "Exact",
 								Backend: Backend{
-									ServiceName: appname,
-									ServicePort: "http",
+									Service: ServiceBackend{
+										Name: appname,
+										Port: PortServiceBackend{
+											Name: "http",
+										},
+									},
 								},
 							},
 						},
@@ -64,11 +69,20 @@ type HTTP struct {
 }
 
 type Path struct {
-	Path    string  `json:"path"`
-	Backend Backend `json:"backend"`
+	Path     string  `json:"path"`
+	PathType string  `json:"pathType"`
+	Backend  Backend `json:"backend"`
 }
 
 type Backend struct {
-	ServiceName string `json:"serviceName"`
-	ServicePort string `json:"servicePort"`
+	Service ServiceBackend `json:"service"`
+}
+
+type ServiceBackend struct {
+	Name string             `json:"name"`
+	Port PortServiceBackend `json:"port"`
+}
+
+type PortServiceBackend struct {
+	Name string `json:"name"`
 }
