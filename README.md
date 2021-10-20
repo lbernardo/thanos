@@ -2,12 +2,17 @@
 
 ### Configuration
 
-#### Kubernetes Ingress
-First execute after commands:
+#### Install dependences
+```
+make install
+```
 
-https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/
+#### Build
+```
+make build-with-docker
+```
 
-#### Configure server
+#### Configure Server
 ```
 thanos config:server
 ```
