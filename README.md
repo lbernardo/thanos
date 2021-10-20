@@ -14,7 +14,7 @@ make build-with-docker
 
 #### Configure Server
 ```
-thanos config:server
+thanos config:server --ip IP_SERVER --config $HOME/.thanos.json
 ```
 
 ### Configure client

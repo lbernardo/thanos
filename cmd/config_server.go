@@ -17,6 +17,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"thanos/app/models"
 
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
@@ -24,6 +27,7 @@ import (
 )
 
 var portInput string
+var ipInput string
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
@@ -34,12 +38,21 @@ var configCmd = &cobra.Command{
 		viper.Set("thanos_secret", secret)
 		viper.Set("thanos_address", fmt.Sprintf("0.0.0.0:%v", portInput))
 		viper.WriteConfig()
+
+		traefik := models.NewTraefikService(ipInput)
+		traefik.ToFile(".traefik-service.json")
+
+		exec.Command("kubectl", "apply", "-f", ".traefik-service.json").Run()
+		os.Remove(".traefik-service.json")
+		fmt.Println("> Update service traefik")
 		fmt.Println("> Configured in", viper.ConfigFileUsed())
-		fmt.Printf("\n\nIn client use:\n\033[1;32mthanos config:client --secret %v --server IP_SERVER:%v\033[0m\n", secret, portInput)
+		fmt.Printf("\n\nIn client use:\n\033[1;32mthanos config:client --secret %v --server %v:%v\033[0m\n", secret, ipInput, portInput)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
 	configCmd.Flags().StringVar(&portInput, "port", "3434", "Port to server use thanos")
+	configCmd.Flags().StringVar(&ipInput, "ip", "", "Public ip")
+	configCmd.MarkFlagRequired("ip")
 }
