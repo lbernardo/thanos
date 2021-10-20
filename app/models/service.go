@@ -7,7 +7,8 @@ func NewService(appname string, port int64) *Service {
 		Kind:       "Service",
 		APIVersion: "v1",
 		Metadata: Metadata{
-			Name: fmt.Sprintf("service-%v", appname),
+			Name:      fmt.Sprintf("service-%v", appname),
+			Namespace: "default",
 		},
 		Spec: Spec{
 			Selector: ServiceSelector{
@@ -15,8 +16,9 @@ func NewService(appname string, port int64) *Service {
 			},
 			Ports: []ServicePort{
 				ServicePort{
-					Name: "http",
-					Port: port,
+					Name:       "web",
+					Port:       port,
+					TargetPort: port,
 				},
 			},
 		},
@@ -24,14 +26,15 @@ func NewService(appname string, port int64) *Service {
 }
 
 type Service struct {
-	Kind       string   `json:"kind"`
 	APIVersion string   `json:"apiVersion"`
+	Kind       string   `json:"kind"`
 	Metadata   Metadata `json:"metadata"`
 	Spec       Spec     `json:"spec"`
 }
 
 type Metadata struct {
-	Name string `json:"name"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
 
 type Spec struct {
@@ -40,8 +43,9 @@ type Spec struct {
 }
 
 type ServicePort struct {
-	Name string `json:"name"`
-	Port int64  `json:"port"`
+	Name       string `json:"name"`
+	Port       int64  `json:"port"`
+	TargetPort int64  `json:"targetPort"`
 }
 
 type ServiceSelector struct {

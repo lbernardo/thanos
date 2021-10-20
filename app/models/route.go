@@ -2,25 +2,26 @@ package models
 
 import "fmt"
 
-func NewRoute(name, host string) *Route {
+func NewRoute(name, host string, port int64) *Route {
 	return &Route{
 		Kind:       "IngressRoute",
 		APIVersion: "traefik.containo.us/v1alpha1",
 		Metadata: RouteMetadata{
-			Name: fmt.Sprintf("ingress-route-%v", name),
+			Name:      fmt.Sprintf("ingress-route-%v", name),
+			Namespace: "default",
 		},
 		Spec: RouteSpec{
-			Entrypoints: []string{
+			EntryPoints: []string{
 				"web",
 			},
-			Routes: []Routes{
+			Routes: []RouteElement{
 				{
 					Match: fmt.Sprintf("Host(`%v`) && PathPrefix(`/`)", host),
 					Kind:  "Rule",
-					Services: []ServiceRoutes{
+					Services: []RouteElementService{
 						{
 							Name: fmt.Sprintf("service-%v", name),
-							Port: "80",
+							Port: port,
 						},
 					},
 				},
@@ -30,28 +31,29 @@ func NewRoute(name, host string) *Route {
 }
 
 type Route struct {
-	Kind       string        `json:"kind"`
 	APIVersion string        `json:"apiVersion"`
+	Kind       string        `json:"kind"`
 	Metadata   RouteMetadata `json:"metadata"`
 	Spec       RouteSpec     `json:"spec"`
 }
 
 type RouteMetadata struct {
-	Name string `json:"name"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
 
 type RouteSpec struct {
-	Entrypoints []string `json:"entrypoints"`
-	Routes      []Routes `json:"routes"`
+	EntryPoints []string       `json:"entryPoints"`
+	Routes      []RouteElement `json:"routes"`
 }
 
-type Routes struct {
-	Match    string          `json:"match"`
-	Kind     string          `json:"kind"`
-	Services []ServiceRoutes `json:"services"`
+type RouteElement struct {
+	Kind     string                `json:"kind"`
+	Match    string                `json:"match"`
+	Services []RouteElementService `json:"services"`
 }
 
-type ServiceRoutes struct {
+type RouteElementService struct {
 	Name string `json:"name"`
-	Port string `json:"port"`
+	Port int64  `json:"port"`
 }

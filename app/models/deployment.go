@@ -1,11 +1,17 @@
 package models
 
+import "fmt"
+
 func NewDeployment(name, image string, replicas, port int64) *Deployment {
 	return &Deployment{
 		Kind:       "Deployment",
-		APIVersion: "v1",
+		APIVersion: "apps/v1",
 		Metadata: DeploymentMetadata{
-			Name: name,
+			Name:      fmt.Sprintf("deploy-%v", name),
+			Namespace: "default",
+			Labels: map[string]string{
+				"app": name,
+			},
 		},
 		Spec: DeploymentSpec{
 			Replicas: replicas,
@@ -22,22 +28,23 @@ func NewDeployment(name, image string, replicas, port int64) *Deployment {
 				},
 				Spec: TemplateSpec{
 					Containers: []Container{
-						Container{
-							Name:  name,
-							Image: image,
+						{
+							Image:           image,
+							ImagePullPolicy: "Always",
+							Name:            fmt.Sprintf("container-%v", name),
 							Ports: []Port{
-								Port{
+								{
 									ContainerPort: port,
 								},
 							},
-							ImagePullPolicy: "Always",
 						},
 					},
 					ImagePullSecrets: []ImagePullSecret{
-						ImagePullSecret{
+						{
 							Name: "gitlab",
 						},
 					},
+					RestartPolicy: "Always",
 				},
 			},
 		},
@@ -45,14 +52,20 @@ func NewDeployment(name, image string, replicas, port int64) *Deployment {
 }
 
 type Deployment struct {
-	Kind       string             `json:"kind"`
 	APIVersion string             `json:"apiVersion"`
+	Kind       string             `json:"kind"`
 	Metadata   DeploymentMetadata `json:"metadata"`
 	Spec       DeploymentSpec     `json:"spec"`
 }
 
 type DeploymentMetadata struct {
-	Name string `json:"name"`
+	Labels    map[string]string `json:"labels"`
+	Name      string            `json:"name"`
+	Namespace string            `json:"namespace"`
+}
+
+type Labels struct {
+	App string `json:"app"`
 }
 
 type DeploymentSpec struct {
@@ -63,10 +76,6 @@ type DeploymentSpec struct {
 
 type Selector struct {
 	MatchLabels Labels `json:"matchLabels"`
-}
-
-type Labels struct {
-	App string `json:"app"`
 }
 
 type Template struct {
@@ -81,13 +90,14 @@ type TemplateMetadata struct {
 type TemplateSpec struct {
 	Containers       []Container       `json:"containers"`
 	ImagePullSecrets []ImagePullSecret `json:"imagePullSecrets"`
+	RestartPolicy    string            `json:"restartPolicy"`
 }
 
 type Container struct {
-	Name            string `json:"name"`
 	Image           string `json:"image"`
-	Ports           []Port `json:"ports"`
 	ImagePullPolicy string `json:"imagePullPolicy"`
+	Name            string `json:"name"`
+	Ports           []Port `json:"ports"`
 }
 
 type Port struct {

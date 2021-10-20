@@ -23,7 +23,7 @@ func ApplyRun(address, secret, env, tag string, content []byte) {
 	environmentContent.Image = fmt.Sprintf("%v:%v", environmentContent.Image, tag)
 	deployment := models.NewDeployment(applyContent.Name, environmentContent.Image, environmentContent.Replicas, environmentContent.Service.Port)
 	service := models.NewService(applyContent.Name, environmentContent.Service.Port)
-	ingress := models.NewRoute(applyContent.Name, environmentContent.Service.Host)
+	ingress := models.NewRoute(applyContent.Name, environmentContent.Service.Host, environmentContent.Service.Port)
 
 	deploymentBytes, _ := json.Marshal(deployment)
 	serviceBytes, _ := json.Marshal(service)
