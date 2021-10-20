@@ -7,4 +7,4 @@ install:
 	./resources/helm/linux-amd64/helm repo update
 	./resources/helm/linux-amd64/helm install traefik traefik/traefik
 build-with-docker:
-	docker run --rm -v $PWD:/var/app -w /var/app golang:1.16 make build
+	docker run --rm -v $(PWD):/var/app -w /var/app golang:1.16 make build
