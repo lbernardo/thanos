@@ -1,11 +1,13 @@
 package models
 
+import "fmt"
+
 func NewService(appname string, port int64) *Service {
 	return &Service{
 		Kind:       "Service",
 		APIVersion: "v1",
 		Metadata: Metadata{
-			Name: appname,
+			Name: fmt.Sprintf("service-%v", appname),
 		},
 		Spec: Spec{
 			Selector: ServiceSelector{

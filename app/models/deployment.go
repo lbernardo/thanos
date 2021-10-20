@@ -3,7 +3,7 @@ package models
 func NewDeployment(name, image string, replicas, port int64) *Deployment {
 	return &Deployment{
 		Kind:       "Deployment",
-		APIVersion: "apps/v1",
+		APIVersion: "v1",
 		Metadata: DeploymentMetadata{
 			Name: name,
 		},
